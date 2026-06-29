@@ -6,5 +6,7 @@ data class UserDto(
     val email : String?,
     val displayName : String?,
     val isVerified : Boolean,
+    val friendsList : List<UserDto>?,
+    val allowedFriendList : List<UserDto>?
 )
 

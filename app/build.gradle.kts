@@ -2,16 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.gms.google-services")
+
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.sharestreet"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.sharestreet"
@@ -60,14 +59,19 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
-    implementation("com.google.firebase:firebase-analytics")
+
+    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
     implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.firebase:firebase-messaging")
-    implementation("com.google.dagger:hilt-android:2.57.1")
-    ksp("com.google.dagger:hilt-android-compiler:2.57.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.57")
+    ksp("com.google.dagger:hilt-compiler:2.57")
+
+    // Hilt Navigation Compose
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    // Coroutines (for await())
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 }

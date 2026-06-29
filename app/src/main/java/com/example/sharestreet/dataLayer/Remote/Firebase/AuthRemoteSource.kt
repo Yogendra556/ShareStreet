@@ -1,19 +1,14 @@
 package com.example.sharestreet.dataLayer.Remote.Firebase
 
+import android.util.Log
 import com.example.sharestreet.dataLayer.Remote.DTO.UserDto
+import com.example.sharestreet.utils.toDto
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-private fun FirebaseUser.toDto():UserDto {
-    return UserDto(
-        uid = this.uid,
-        email = this.email,
-        displayName = this.displayName,
-        isVerified = this.isEmailVerified
-    )
-}
+
 class AuthRemoteSource @Inject constructor(
     private val firebaseAuth : FirebaseAuth
 ){
@@ -21,6 +16,7 @@ class AuthRemoteSource @Inject constructor(
         val result = firebaseAuth
             .signInWithEmailAndPassword(email,password)
             .await()
+        Log.d("UserSignIN","${result.user!!.toDto().toString()}")
         return result.user!!.toDto()
     }
 
@@ -28,6 +24,7 @@ class AuthRemoteSource @Inject constructor(
         val result = firebaseAuth
             .createUserWithEmailAndPassword(email,password)
             .await()
+        Log.d("UserSignUp","${result.user!!.toDto().toString()}")
         return result.user!!.toDto()
     }
 
@@ -40,3 +37,5 @@ class AuthRemoteSource @Inject constructor(
         return result
     }
 }
+
+
