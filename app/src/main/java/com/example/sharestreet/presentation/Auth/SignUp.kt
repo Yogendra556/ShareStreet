@@ -29,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +45,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.sharestreet.ViewModels.AuthViewModel
+import com.google.firebase.firestore.auth.User
 
 
 @Composable
 fun SignUpScreen(
     navController: NavController,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = hiltViewModel(),
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -125,7 +127,7 @@ fun SignUpScreen(
 
         Button(
             onClick = {
-                viewModel.signUp(email,password)
+                viewModel.signUp(name,email,password)
                 navController.navigate("Home")},
             modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
