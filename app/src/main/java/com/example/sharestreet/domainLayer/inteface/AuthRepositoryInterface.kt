@@ -11,5 +11,5 @@ import javax.inject.Inject
     fun getCurrentUser(): UserModel?
     suspend fun getUserById(userId: String): UserModel?
 
-     suspend fun getUserByName(username:String): UserModel?
+    suspend fun getUserByName(username:String):List<UserModel>?
 }

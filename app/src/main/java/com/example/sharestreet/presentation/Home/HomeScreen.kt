@@ -3,13 +3,18 @@ package com.example.sharestreet.presentation.Home
 import android.R.attr.navigationIcon
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -42,48 +47,84 @@ import androidx.navigation.NavController
 import com.example.sharestreet.ViewModels.AuthViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.sharestreet.ViewModels.FriendRequestViewModel
+import com.example.sharestreet.domainLayer.model.FriendRequestModel
 import com.example.sharestreet.domainLayer.model.UserModel
+import com.example.sharestreet.domainLayer.model.UserSearchResult
 import kotlinx.coroutines.launch
 
 @Composable
 fun Homescreen(
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    friendsRequestViewModel: FriendRequestViewModel = hiltViewModel()
 ){
     var searchValue by remember {
         mutableStateOf("")
     }
+    val currentUser = authViewModel.getCurrentUser()
     fun searchFun(){
-        authViewModel.getUserByName(searchValue)
+        friendsRequestViewModel.searchUsers(currentUser!!.uid,searchValue)
     }
-    val searchResult by authViewModel.userByName.collectAsState()
+    val searchResult by friendsRequestViewModel.searchedUsers.collectAsState()
     Log.d("SearchResult","${searchResult}")
+
+
     Box(
         modifier = Modifier.fillMaxSize()
     ){
         Column() {
             Box(){
-                sideDrawer(searchValue, { searchValue = it }, { searchFun() })
+                sideDrawer(searchValue, { searchValue = it }, {searchFun()})
             }
             Box(
                 modifier = Modifier.fillMaxWidth()
                     .padding(12.dp)
             ){
-                SearchResultCard(searchResult)
+                SearchResultList(searchResult, senderId = currentUser!!.uid)
             }
         }
     }
 }
 @Composable
-fun SearchResultCard(
-    userFound: UserModel?
-){
-    if(userFound!=null){
-        Card(
-            modifier = Modifier.padding(12.dp),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Text("${userFound?.displayName}")
+fun SearchResultList(
+    userFound: List<UserSearchResult>?,
+    friendsRequestViewModel: FriendRequestViewModel = hiltViewModel(),
+    senderId : String
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(userFound!!.size) { user ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = userFound[user].user.displayName ?: "Unknown User",
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    Button(
+                        onClick = {
+                            friendsRequestViewModel.addRequest(senderId,userFound[user].user.uid)
+                        }
+                    ) {
+                        Text("Add")
+                    }
+                }
+            }
         }
     }
 }
@@ -157,4 +198,10 @@ fun sideDrawer(
             }
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun previewFun(){
+
 }

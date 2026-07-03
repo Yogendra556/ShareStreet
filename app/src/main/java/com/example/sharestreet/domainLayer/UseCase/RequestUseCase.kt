@@ -6,6 +6,8 @@ import com.example.sharestreet.domainLayer.inteface.AuthRepository
 import com.example.sharestreet.domainLayer.inteface.FriendRequestInterface
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
 import com.example.sharestreet.domainLayer.model.UserModel
+import com.example.sharestreet.domainLayer.model.UserSearchResult
+import com.example.sharestreet.utils.RelationStatus
 import javax.inject.Inject
 
 class RequestUseCase @Inject constructor(
@@ -41,5 +43,25 @@ class RequestUseCase @Inject constructor(
             authRepo.getUserById(it.senderId)
         }
         return sentRequestsData
+    }
+
+    suspend fun searchUsersWithStatus(senderId: String,searchName:String):List<UserSearchResult>?{
+        val searchedUsers = authRepo.getUserByName(searchName)
+        val sentRequest = requestRepo.getSenderRequestById(senderId)
+        val result = searchedUsers!!.map {user->
+            val status = when {
+                sentRequest?.find { req ->
+                    req.receiverId == user.uid && req.status=="Pending"
+                }!=null -> RelationStatus.Sent
+                sentRequest?.find { req ->
+                    req.receiverId == user.uid && req.status=="Accepted"
+                }!=null -> RelationStatus.Friends
+                else-> RelationStatus.None
+            }
+            UserSearchResult(
+                user,status
+            )
+        }
+        return result
     }
 }

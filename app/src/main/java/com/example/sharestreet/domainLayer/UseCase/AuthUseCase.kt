@@ -27,7 +27,7 @@ class AuthUseCase @Inject constructor(
         return authRepository.getUserById(userId)
     }
 
-    suspend fun getUserByName(username:String): UserModel?{
+    suspend fun getUserByName(username:String): List<UserModel>?{
         if(username!=null){
             return authRepository.getUserByName(username)
         }

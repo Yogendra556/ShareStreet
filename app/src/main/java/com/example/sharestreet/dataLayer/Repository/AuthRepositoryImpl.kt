@@ -45,7 +45,9 @@ class AuthRepositoryImpl @Inject constructor(
         return userRemoteSource.getUserById(UserId)?.toUserModel()
     }
 
-    override suspend fun getUserByName(username:String):UserModel?{
-        return userRemoteSource.getUserByName(username)?.toUserModel()
+    override suspend fun getUserByName(username:String):List<UserModel>?{
+        return userRemoteSource.getUserByName(username)?.map {
+            it.toUserModel()
+        }
     }
 }

@@ -21,7 +21,7 @@ class AuthViewModel @Inject constructor(
     private val _userById = MutableStateFlow<UserModel?>(null)
     val userById = _userById.asStateFlow()
 
-    private val _userByName = MutableStateFlow<UserModel?>(null)
+    private val _userByName = MutableStateFlow<List<UserModel>?>(null)
     val userByName = _userByName.asStateFlow()
 
     fun signIn(email:String,password:String){

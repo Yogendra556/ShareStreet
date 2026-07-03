@@ -23,12 +23,14 @@ class UserRemoteSource @Inject constructor(
         return item.toObject(UserDto::class.java)
     }
 
-    suspend fun getUserByName(userName: String): UserDto?{
+    suspend fun getUserByName(userName: String): List<UserDto>?{
         val item = db.collection("User")
-            .whereEqualTo("displayName",userName)
             .get()
             .await()
+            .toObjects(UserDto::class.java)
 
-        return item.toObjects(UserDto::class.java).firstOrNull()
+        return item.filter{
+             it.displayName!!.contains(userName)
+        }
     }
 }
