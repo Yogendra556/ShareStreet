@@ -72,19 +72,17 @@ fun Homescreen(
     Log.d("SearchResult","${searchResult}")
 
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ){
-        Column() {
-            Box(){
-                sideDrawer(searchValue, { searchValue = it }, {searchFun()})
-            }
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(12.dp)
-            ){
-                SearchResultList(searchResult, senderId = currentUser!!.uid)
-            }
+    sideDrawer(
+        searchValue = searchValue,
+        onValueChange = { searchValue = it },
+        searchFun = { searchFun() },
+        navController = navController
+    ) {
+        if (currentUser != null && searchResult != null) {
+            SearchResultList(
+                userFound = searchResult,
+                senderId = currentUser.uid
+            )
         }
     }
 }
@@ -134,7 +132,9 @@ fun sideDrawer(
     searchValue: String,
     onValueChange: (String)-> Unit,
     searchFun: ()->Unit = {},
-    authViewModel: AuthViewModel = hiltViewModel()
+    navController: NavController,
+    authViewModel: AuthViewModel = hiltViewModel(),
+    content:@Composable ()-> Unit
 ){
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -149,7 +149,7 @@ fun sideDrawer(
                 NavigationDrawerItem(
                     label = {Text("Friends")},
                     selected = false,
-                    onClick = {}
+                    onClick = {navController.navigate("FriendScreen")}
                 )
                 NavigationDrawerItem(
                     label = {Text("Location")},
@@ -159,44 +159,60 @@ fun sideDrawer(
                 NavigationDrawerItem(
                     label = {Text("Log Out")},
                     selected = false,
-                    onClick = {authViewModel.signOut()}
+                    onClick = {
+                        authViewModel.signOut()
+                        navController.navigate("Home")
+                    }
                 )
             }
         }
-    ){
-        TopAppBar(
-            navigationIcon = {
-                IconButton(onClick = {
-                    scope.launch {
-                        drawerState.open()
+    ){Scaffold(
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menu"
+                        )
                     }
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Menu"
+                },
+                title = {
+                    TextField(
+                        value = searchValue,
+                        onValueChange = {
+                            onValueChange(it)
+                        },
+                        placeholder = { Text("Search") }
                     )
+                },
+                actions = {
+                    IconButton(onClick = {
+                        searchFun()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search"
+                        )
+                    }
                 }
-            },
-            title = {
-                TextField(
-                    value = searchValue,
-                    onValueChange = {
-                        onValueChange(it)
-                    },
-                    placeholder = { Text("Search") }
-                )
-            },
-            actions = {
-                IconButton(onClick = {
-                    searchFun()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search"
-                    )
-                }
-            }
-        )
+            )
+        }
+    ) {paddingValues ->
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            content()
+        }
+    }
+
     }
 }
 

@@ -1,5 +1,6 @@
 package com.example.sharestreet.dataLayer.Remote.Firebase
 
+import android.R
 import com.example.sharestreet.dataLayer.Remote.DTO.FriendRequestDto
 import com.example.sharestreet.dataLayer.Remote.DTO.FriendsDto
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,11 +10,16 @@ import javax.inject.Inject
 class FriendRequestRemoteSource @Inject constructor(
     private val db : FirebaseFirestore
 ) {
-
-    suspend fun addRequest(request: FriendRequestDto){
-        db.collection("FriendRequest")
-            .add(request)
-            .await()
+    suspend fun addRequest(senderId: String,receiverId:String){
+        val docRef = db.collection("FriendRequest")
+            .document()
+        val request = FriendRequestDto(
+            uid = docRef.id,
+            senderId = senderId,
+            receiverId = receiverId,
+            status = "Pending"
+        )
+        docRef.set(request)
     }
     // This fetches friendrequests for receiver they can accept or reject
     suspend fun getRecieverRequestById(userId: String):List<FriendRequestDto>?{
@@ -32,6 +38,13 @@ class FriendRequestRemoteSource @Inject constructor(
             .get()
             .await()
         return result.toObjects(FriendRequestDto::class.java)
+    }
+    // Type defines accept/reject
+    suspend fun acceptRejectReq(requestId:String,type: String){
+        val dbRef = db.collection("FriendRequest")
+            .document(requestId)
+            .update("status",type)
+            .await()
     }
 
 }

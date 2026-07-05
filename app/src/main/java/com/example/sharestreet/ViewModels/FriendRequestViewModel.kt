@@ -2,8 +2,10 @@ package com.example.sharestreet.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sharestreet.domainLayer.UseCase.AuthUseCase
 import com.example.sharestreet.domainLayer.UseCase.RequestUseCase
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
+import com.example.sharestreet.domainLayer.model.RequestWithUser
 import com.example.sharestreet.domainLayer.model.UserModel
 import com.example.sharestreet.domainLayer.model.UserSearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,12 +16,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendRequestViewModel @Inject constructor(
-    private val requestUseCase: RequestUseCase
+    private val requestUseCase: RequestUseCase,
+    private val authUseCas : AuthUseCase
 ): ViewModel(){
 
     private val _sentRequest = MutableStateFlow<List<UserModel?>?>(null)
     val sentRequest = _sentRequest.asStateFlow()
-    private val _receivedRequest = MutableStateFlow<List<UserModel?>?>(null)
+    private val _receivedRequest = MutableStateFlow<List<RequestWithUser>?>(null)
     val receivedRequest = _receivedRequest.asStateFlow()
 
     private val _searchUsers = MutableStateFlow<List<UserSearchResult>?>(null)
@@ -47,6 +50,12 @@ class FriendRequestViewModel @Inject constructor(
     fun searchUsers(senderId:String,searchName: String){
         viewModelScope.launch {
             _searchUsers.value = requestUseCase.searchUsersWithStatus(senderId, searchName)
+        }
+    }
+
+    fun acceptRejectReq(requestId:String,type: String){
+        viewModelScope.launch {
+            requestUseCase.acceptRejectRequest(requestId,type)
         }
     }
 }

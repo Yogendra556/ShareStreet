@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,7 +54,10 @@ fun signInPage(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-
+    val authState by viewModel.authState.collectAsState()
+    if(authState== AuthState.Success){
+        navController.navigate("Home")
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,7 +115,7 @@ fun signInPage(
         Button(
             onClick = {
                 viewModel.signIn(email,password)
-                navController.navigate("Home")},
+                },
             modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
             Text("Sign in")

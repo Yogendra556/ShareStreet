@@ -11,9 +11,8 @@ class FriendRequestRepoImpl @Inject constructor(
     private val remoteSource: FriendRequestRemoteSource
 ): FriendRequestInterface{
 
-    override suspend fun addRequest(request: FriendRequestModel){
-        val requestDto = request.toFriendRequestDto()
-        remoteSource.addRequest(requestDto)
+    override suspend fun addRequest(senderId: String,receiverId: String){
+        remoteSource.addRequest(senderId,receiverId)
     }
 
     override suspend fun getReceiverRequestById(receiverId:String):List<FriendRequestModel>?{
@@ -28,5 +27,9 @@ class FriendRequestRepoImpl @Inject constructor(
             it.toFriendRequestModel()
         }
         return result
+    }
+
+    override suspend fun acceptRejectRequest(requestId: String, type: String) {
+        remoteSource.acceptRejectReq(requestId,type)
     }
 }

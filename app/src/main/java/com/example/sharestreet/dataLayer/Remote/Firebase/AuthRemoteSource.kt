@@ -24,7 +24,7 @@ class AuthRemoteSource @Inject constructor(
         val result = firebaseAuth
             .createUserWithEmailAndPassword(email,password)
             .await()
-        Log.d("UserSignUp","${result.user!!.toDto().toString()}")
+        Log.d("UserSignUp",result.user!!.toDto().toString())
         return result.user!!.toDto()
     }
 

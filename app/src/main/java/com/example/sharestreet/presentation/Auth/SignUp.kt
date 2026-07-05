@@ -57,7 +57,10 @@ fun SignUpScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-
+    val authState by viewModel.authState.collectAsState()
+    if(authState== AuthState.Success){
+        navController.navigate("Home")
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -128,7 +131,7 @@ fun SignUpScreen(
         Button(
             onClick = {
                 viewModel.signUp(name,email,password)
-                navController.navigate("Home")},
+                },
             modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
             Text("Create account")
@@ -145,7 +148,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
-            onClick = { /* handle Google sign in */ },
+            onClick = {  },
             modifier = Modifier.fillMaxWidth().height(48.dp)
         ) {
             Text("Continue with Google")

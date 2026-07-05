@@ -23,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.sharestreet.ViewModels.AuthViewModel
 import com.example.sharestreet.presentation.Auth.SignUpScreen
 import com.example.sharestreet.presentation.Auth.signInPage
+import com.example.sharestreet.presentation.Friends.FriendsScreen
 import com.example.sharestreet.presentation.Home.Homescreen
 import com.example.sharestreet.ui.theme.ShareStreetTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,6 +56,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("Home"){
                             Homescreen(navController)
+                        }
+                        composable("FriendScreen"){
+                            FriendsScreen()
                         }
                     }
                 }

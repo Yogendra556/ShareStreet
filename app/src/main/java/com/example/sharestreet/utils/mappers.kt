@@ -29,11 +29,13 @@ fun UserModel.toUserDto() = UserDto(
 )
 
 fun FriendRequestModel.toFriendRequestDto() = FriendRequestDto(
+    uid = reqestUid,
     senderId = senderId,
     receiverId = receiverId,
     status = status
 )
 fun FriendRequestDto.toFriendRequestModel() = FriendRequestModel(
+    reqestUid = uid,
     senderId = senderId,
     receiverId = receiverId,
     status = status

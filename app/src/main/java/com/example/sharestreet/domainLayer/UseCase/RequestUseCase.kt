@@ -5,6 +5,7 @@ import com.example.sharestreet.dataLayer.Remote.DTO.UserDto
 import com.example.sharestreet.domainLayer.inteface.AuthRepository
 import com.example.sharestreet.domainLayer.inteface.FriendRequestInterface
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
+import com.example.sharestreet.domainLayer.model.RequestWithUser
 import com.example.sharestreet.domainLayer.model.UserModel
 import com.example.sharestreet.domainLayer.model.UserSearchResult
 import com.example.sharestreet.utils.RelationStatus
@@ -17,22 +18,19 @@ class RequestUseCase @Inject constructor(
 
     suspend fun addRequest(senderId: String,receiverId: String){
         if(senderId!=null && receiverId!=null) {
-            val request = FriendRequestModel(
-                senderId,
-                receiverId,
-                "Pending"
-            )
-            requestRepo.addRequest(request)
+            requestRepo.addRequest(senderId,receiverId)
         }
         else{
             Log.d("ADD Request Failed sender or receiver is null","${senderId}+k+${receiverId}")
         }
     }
 
-    suspend fun getFriendRequest(receiverId: String): List<UserModel?>?{
+    suspend fun getFriendRequest(receiverId: String): List<RequestWithUser>?{
         val friendRequestList = requestRepo.getReceiverRequestById(receiverId)
         val friendsRequestsData = friendRequestList?.map {
-            authRepo.getUserById(it.senderId)
+            val user = authRepo.getUserById(it.senderId)
+            val requestId = it.reqestUid
+            RequestWithUser(user!!,requestId)
         }
         return friendsRequestsData
     }
@@ -63,5 +61,8 @@ class RequestUseCase @Inject constructor(
             )
         }
         return result
+    }
+    suspend fun acceptRejectRequest(requestId:String,type:String){
+        requestRepo.acceptRejectRequest(requestId,type)
     }
 }
