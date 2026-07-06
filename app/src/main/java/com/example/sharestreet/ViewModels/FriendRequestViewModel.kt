@@ -1,5 +1,6 @@
 package com.example.sharestreet.ViewModels
 
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharestreet.domainLayer.UseCase.AuthUseCase
@@ -20,12 +21,12 @@ class FriendRequestViewModel @Inject constructor(
     private val authUseCas : AuthUseCase
 ): ViewModel(){
 
-    private val _sentRequest = MutableStateFlow<List<UserModel?>?>(null)
+    private val _sentRequest = MutableStateFlow<List<UserModel?>>(emptyList())
     val sentRequest = _sentRequest.asStateFlow()
-    private val _receivedRequest = MutableStateFlow<List<RequestWithUser>?>(null)
+    private val _receivedRequest = MutableStateFlow<List<RequestWithUser>>(emptyList())
     val receivedRequest = _receivedRequest.asStateFlow()
 
-    private val _searchUsers = MutableStateFlow<List<UserSearchResult>?>(null)
+    private val _searchUsers = MutableStateFlow<List<UserSearchResult>>(emptyList())
     val searchedUsers = _searchUsers.asStateFlow()
 
     fun addRequest(senderId:String,receiverId:String){
@@ -36,20 +37,26 @@ class FriendRequestViewModel @Inject constructor(
 
     fun getSentRequest(senderId: String){
         viewModelScope.launch {
-            _sentRequest.value = requestUseCase.getSentRequest(senderId)
+            requestUseCase.getSentRequest(senderId).collect {result->
+                _sentRequest.value = result
+            }
         }
     }
 
     fun getFriendRequest(receiverId: String){
         viewModelScope.launch {
-            _receivedRequest.value = requestUseCase.getFriendRequest(receiverId)
+           requestUseCase.getFriendRequest(receiverId).collect{
+               _receivedRequest.value = it
+           }
         }
     }
 
 
     fun searchUsers(senderId:String,searchName: String){
         viewModelScope.launch {
-            _searchUsers.value = requestUseCase.searchUsersWithStatus(senderId, searchName)
+           requestUseCase.searchUsersWithStatus(senderId,searchName).collect {
+               _searchUsers.value = it
+           }
         }
     }
 

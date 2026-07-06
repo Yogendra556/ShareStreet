@@ -37,7 +37,7 @@ class FriendRemoteSource @Inject constructor(
             )
     }
 
-    suspend fun getFriendsList(userId: String):List<String>?{
+     suspend fun getFriendsList(userId: String):List<String>?{
         val list = db.collection("Friends")
             .document(userId)
             .get()

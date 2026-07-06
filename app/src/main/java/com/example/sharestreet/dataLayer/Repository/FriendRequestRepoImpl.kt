@@ -1,10 +1,12 @@
 package com.example.sharestreet.dataLayer.Repository
 
+import android.util.Log
 import com.example.sharestreet.dataLayer.Remote.Firebase.FriendRequestRemoteSource
 import com.example.sharestreet.domainLayer.inteface.FriendRequestInterface
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
-import com.example.sharestreet.utils.toFriendRequestDto
 import com.example.sharestreet.utils.toFriendRequestModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FriendRequestRepoImpl @Inject constructor(
@@ -15,16 +17,22 @@ class FriendRequestRepoImpl @Inject constructor(
         remoteSource.addRequest(senderId,receiverId)
     }
 
-    override suspend fun getReceiverRequestById(receiverId:String):List<FriendRequestModel>?{
-        val result = remoteSource.getRecieverRequestById(receiverId)?.map{
-            it.toFriendRequestModel()
+    // We can map flow firstly to the list then trnasform the list from dto to model
+    override fun getReceiverRequestById(receiverId:String):Flow<List<FriendRequestModel>>{
+        val result = remoteSource.getReceiverRequestById(receiverId).map { requestlist->
+            requestlist.map {
+                it.toFriendRequestModel()
+            }
         }
+        Log.d("FriendRequest","$result")
         return result
     }
 
-    override suspend fun getSenderRequestById(senderId:String): List<FriendRequestModel>?{
-        val result = remoteSource.getSenderRequestById(senderId)?.map {
-            it.toFriendRequestModel()
+    override fun getSenderRequestById(senderId:String): Flow<List<FriendRequestModel>>{
+        val result = remoteSource.getSenderRequestById(senderId).map {requestList->
+            requestList.map {
+                it.toFriendRequestModel()
+            }
         }
         return result
     }

@@ -53,6 +53,7 @@ import com.example.sharestreet.ViewModels.FriendRequestViewModel
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
 import com.example.sharestreet.domainLayer.model.UserModel
 import com.example.sharestreet.domainLayer.model.UserSearchResult
+import com.example.sharestreet.utils.RelationStatus
 import kotlinx.coroutines.launch
 
 @Composable
@@ -119,7 +120,14 @@ fun SearchResultList(
                             friendsRequestViewModel.addRequest(senderId,userFound[user].user.uid)
                         }
                     ) {
-                        Text("Add")
+                        val userStatus = userFound[user].status
+                        if(userStatus == RelationStatus.None) Text("Add")
+                        else if(userStatus == RelationStatus.Friends){
+                           Text("Friends")
+                        }
+                        else if(userStatus == RelationStatus.Sent){
+                            Text("Pending")
+                        }
                     }
                 }
             }

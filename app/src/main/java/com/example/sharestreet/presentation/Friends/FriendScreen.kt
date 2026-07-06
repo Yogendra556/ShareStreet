@@ -1,6 +1,7 @@
 package com.example.sharestreet.presentation.Friends
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,30 +22,31 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.sharestreet.ViewModels.AuthViewModel
 import com.example.sharestreet.domainLayer.model.RequestWithUser
 import com.example.sharestreet.domainLayer.model.UserModel
 
 @Composable
 fun FriendsScreen(
-    friendRequestViewModel: FriendRequestViewModel = hiltViewModel()
+    friendRequestViewModel: FriendRequestViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ){
-    val friendReqList by friendRequestViewModel.receivedRequest.collectAsState()
-    var reqList by remember{
-        mutableStateOf(friendReqList)
+    val currentUser = authViewModel.getCurrentUser()
+    friendRequestViewModel.getFriendRequest(currentUser!!.uid)
+    val reqList by friendRequestViewModel.receivedRequest.collectAsState()
+    Box(
+        modifier = Modifier.padding(24.dp)
+    ) {
+        FriendReqList(
+            reqList,
+            acceptRejectRequest = { a, b ->
+                friendRequestViewModel.acceptRejectReq(a, b)
+            })
     }
-    FriendReqList(reqList,OnRemove={uid->
-        reqList?.filter {
-            it?.user?.uid!=uid
-        }
-    },
-        acceptRejectRequest = {a,b->
-            friendRequestViewModel.acceptRejectReq(a,b)
-        })
 }
 @Composable
 fun FriendReqList(
-    friendRequestList:List<RequestWithUser>?,
-    OnRemove:(String)->Unit,
+    friendRequestList:List<RequestWithUser>,
     acceptRejectRequest:(String,String)-> Unit
 ){
 
@@ -56,10 +58,9 @@ fun FriendReqList(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(bottom = 24.dp)
     ){
-        items(friendRequestList!!.size){idx->
+        items(friendRequestList.size){idx->
             reqCard(
                 friendRequestList[idx].user,
-                OnRemove,
                 acceptRejectRequest = {it->
                     acceptRejectRequest(friendRequestList[idx].requestId,it)
                 }
@@ -70,7 +71,6 @@ fun FriendReqList(
 @Composable
 fun reqCard(
     reqItem: UserModel?,
-    OnRemove: (String) -> Unit,
     acceptRejectRequest: (String) -> Unit
 ){
     Card(
@@ -81,7 +81,6 @@ fun reqCard(
             Text("${reqItem?.displayName}")
             Button(onClick = {
                 if(reqItem!=null){
-                    OnRemove(reqItem.uid)
                     acceptRejectRequest("Accept")
                 }
                 //Accept
@@ -90,7 +89,6 @@ fun reqCard(
             }
             Button(onClick = {
                 if(reqItem!=null){
-                    OnRemove(reqItem.uid)
                     acceptRejectRequest("Reject")
                 }
                 //Reject
