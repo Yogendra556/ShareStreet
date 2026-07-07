@@ -2,6 +2,8 @@ package com.example.sharestreet.dataLayer.Repository
 
 import com.example.sharestreet.dataLayer.Remote.Firebase.FriendRemoteSource
 import com.example.sharestreet.domainLayer.inteface.FriendsRepostoryInterface
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FriendRepositoryImpl @Inject constructor(
@@ -16,7 +18,7 @@ class FriendRepositoryImpl @Inject constructor(
         friendRemoteSource.removeFriend(userId,friendId)
     }
 
-    override suspend fun getFriendList(userId: String):List<String>?{
+    override fun getFriendList(userId: String): Flow<List<String>> {
         return friendRemoteSource.getFriendsList(userId)
     }
 }

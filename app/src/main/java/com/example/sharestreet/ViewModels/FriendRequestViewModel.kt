@@ -4,6 +4,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharestreet.domainLayer.UseCase.AuthUseCase
+import com.example.sharestreet.domainLayer.UseCase.FriendsUseCase
 import com.example.sharestreet.domainLayer.UseCase.RequestUseCase
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
 import com.example.sharestreet.domainLayer.model.RequestWithUser
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FriendRequestViewModel @Inject constructor(
     private val requestUseCase: RequestUseCase,
-    private val authUseCas : AuthUseCase
+    private val authUseCas : AuthUseCase,
+    private val friendUseCase : FriendsUseCase
 ): ViewModel(){
 
     private val _sentRequest = MutableStateFlow<List<UserModel?>>(emptyList())
@@ -52,17 +54,24 @@ class FriendRequestViewModel @Inject constructor(
     }
 
 
-    fun searchUsers(senderId:String,searchName: String){
+    fun searchUsers(senderId:String,searchName: String) {
         viewModelScope.launch {
-           requestUseCase.searchUsersWithStatus(senderId,searchName).collect {
-               _searchUsers.value = it
-           }
+
+            requestUseCase.searchUsersWithStatus(senderId, searchName).collect {
+                _searchUsers.value = it
+
+
+            }
         }
     }
 
-    fun acceptRejectReq(requestId:String,type: String){
+    fun acceptRejectReq(requestId: String, type: String) {
         viewModelScope.launch {
-            requestUseCase.acceptRejectRequest(requestId,type)
+            try {
+                requestUseCase.acceptRejectRequest(requestId, type)
+            } catch (e: Exception) {
+
+            }
         }
     }
 }

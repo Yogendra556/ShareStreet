@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.sharestreet.dataLayer.Remote.DTO.UserDto
 import com.example.sharestreet.domainLayer.inteface.AuthRepository
 import com.example.sharestreet.domainLayer.inteface.FriendRequestInterface
+import com.example.sharestreet.domainLayer.inteface.FriendsRepostoryInterface
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
 import com.example.sharestreet.domainLayer.model.RequestWithUser
 import com.example.sharestreet.domainLayer.model.UserModel
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 class RequestUseCase @Inject constructor(
     private val requestRepo: FriendRequestInterface,
-    private val authRepo : AuthRepository
+    private val authRepo : AuthRepository,
 ) {
 
     suspend fun addRequest(senderId: String,receiverId: String){

@@ -3,6 +3,8 @@ package com.example.sharestreet.domainLayer.UseCase
 import com.example.sharestreet.domainLayer.inteface.AuthRepository
 import com.example.sharestreet.domainLayer.inteface.FriendsRepostoryInterface
 import com.example.sharestreet.domainLayer.model.UserModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FriendsUseCase @Inject constructor(
@@ -16,10 +18,12 @@ class FriendsUseCase @Inject constructor(
     suspend fun removeFriend(UserId: String,friendId: String){
         friendsRepository.removeFriend(UserId,friendId)
     }
-    suspend fun getFriendList(UserId: String):List<UserModel?>?{
+    fun getFriendList(UserId: String): Flow<List<UserModel?>>{
         val friendIdList = friendsRepository.getFriendList(UserId)
-        return friendIdList?.map {id->
-            authRepository.getUserById(id)
+        return friendIdList.map {list->
+               list.map {it->
+                   authRepository.getUserById(it)
+               }
         }
     }
 }
