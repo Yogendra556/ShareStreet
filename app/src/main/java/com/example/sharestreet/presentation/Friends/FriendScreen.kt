@@ -52,7 +52,7 @@ import com.example.sharestreet.domainLayer.model.UserModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun friendsScreen(
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel = hiltViewModel()
 ){
     val currentUser = authViewModel.getCurrentUser()
     var selectedTab by rememberSaveable{
@@ -89,9 +89,8 @@ fun friendsScreen(
             )
         }
         when (selectedTab) {
-            0 -> RequestListScreen(currentUser)
-
-            1 -> FriendListScreen(currentUser)
+            0 -> FriendListScreen(currentUser)
+            1 -> RequestListScreen(currentUser)
         }
     }
 }

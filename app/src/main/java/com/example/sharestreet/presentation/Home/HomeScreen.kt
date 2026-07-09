@@ -121,7 +121,10 @@ fun SearchResultList(
                         }
                     ) {
                         val userStatus = userFound[user].status
-                        if(userStatus == RelationStatus.None) Text("Add")
+                        if(senderId == userFound[user].user.uid){
+                        Text("")
+                        }
+                        else if(userStatus == RelationStatus.None) Text("Add")
                         else if(userStatus == RelationStatus.Friends){
                            Text("Friends")
                         }

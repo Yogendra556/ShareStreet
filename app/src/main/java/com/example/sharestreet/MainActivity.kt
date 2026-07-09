@@ -23,7 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.sharestreet.ViewModels.AuthViewModel
 import com.example.sharestreet.presentation.Auth.SignUpScreen
 import com.example.sharestreet.presentation.Auth.signInPage
-import com.example.sharestreet.presentation.Friends.FriendsScreen
+import com.example.sharestreet.presentation.Friends.friendsScreen
 import com.example.sharestreet.presentation.Home.Homescreen
 import com.example.sharestreet.ui.theme.ShareStreetTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,8 +42,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ShareStreetTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val navController = rememberNavController()
 
+                    val navController = rememberNavController()
                     NavHost(
                         navController = navController,
                         startDestination = if(authViewModel.getCurrentUser()==null) "SignIn" else "Home",
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                             Homescreen(navController)
                         }
                         composable("FriendScreen"){
-                            FriendsScreen()
+                            friendsScreen()
                         }
                     }
                 }
