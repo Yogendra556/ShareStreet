@@ -4,5 +4,5 @@ data class LocationDTO(
     val uid:String="",
     val lat:Double=0.0,
     val long:Double=0.0,
-    val AllowedUsers:List<String>
+    val AllowedUsers: Map<String, Boolean> = emptyMap()
 )
