@@ -114,22 +114,22 @@ fun SearchResultList(
                         text = userFound[user].user.displayName ?: "Unknown User",
                         modifier = Modifier.weight(1f)
                     )
-
-                    Button(
-                        onClick = {
-                            friendsRequestViewModel.addRequest(senderId,userFound[user].user.uid)
-                        }
-                    ) {
-                        val userStatus = userFound[user].status
-                        if(senderId == userFound[user].user.uid){
-                        Text("")
-                        }
-                        else if(userStatus == RelationStatus.None) Text("Add")
-                        else if(userStatus == RelationStatus.Friends){
-                           Text("Friends")
-                        }
-                        else if(userStatus == RelationStatus.Sent){
-                            Text("Pending")
+                    if(senderId != userFound[user].user.uid) {
+                        Button(
+                            onClick = {
+                                friendsRequestViewModel.addRequest(
+                                    senderId,
+                                    userFound[user].user.uid
+                                )
+                            }
+                        ) {
+                            val userStatus = userFound[user].status
+                            if (userStatus == RelationStatus.None) Text("Add")
+                            else if (userStatus == RelationStatus.Friends) {
+                                Text("Friends")
+                            } else if (userStatus == RelationStatus.Sent) {
+                                Text("Pending")
+                            }
                         }
                     }
                 }

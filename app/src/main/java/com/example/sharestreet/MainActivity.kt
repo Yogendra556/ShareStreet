@@ -25,6 +25,7 @@ import com.example.sharestreet.presentation.Auth.SignUpScreen
 import com.example.sharestreet.presentation.Auth.signInPage
 import com.example.sharestreet.presentation.Friends.friendsScreen
 import com.example.sharestreet.presentation.Home.Homescreen
+import com.example.sharestreet.presentation.Location.AllowedFriendsScreen
 import com.example.sharestreet.ui.theme.ShareStreetTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -59,6 +60,10 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("FriendScreen"){
                             friendsScreen()
+                        }
+
+                        composable("Location"){
+                            AllowedFriendsScreen()
                         }
                     }
                 }

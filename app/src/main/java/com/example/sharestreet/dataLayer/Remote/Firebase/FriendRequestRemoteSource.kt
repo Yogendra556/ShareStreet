@@ -73,5 +73,4 @@ class FriendRequestRemoteSource @Inject constructor(
             .update("status",type)
             .await()
     }
-
 }
