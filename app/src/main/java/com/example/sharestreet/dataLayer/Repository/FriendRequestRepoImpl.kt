@@ -1,6 +1,7 @@
 package com.example.sharestreet.dataLayer.Repository
 
 import android.util.Log
+import com.example.sharestreet.dataLayer.Remote.DTO.FriendRequestDto
 import com.example.sharestreet.dataLayer.Remote.Firebase.FriendRequestRemoteSource
 import com.example.sharestreet.domainLayer.inteface.FriendRequestInterface
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
@@ -39,5 +40,9 @@ class FriendRequestRepoImpl @Inject constructor(
 
     override suspend fun acceptRejectRequest(requestId: String, type: String) {
         remoteSource.acceptRejectReq(requestId,type)
+    }
+
+    override suspend fun getRequestById(reqId:String): FriendRequestDto?{
+        return remoteSource.getRequestById(reqId)
     }
 }

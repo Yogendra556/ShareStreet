@@ -7,14 +7,14 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.sharestreet.ViewModels.LocationViewModel
+import com.example.sharestreet.R
 import com.example.sharestreet.domainLayer.UseCase.LocationUseCase
-import com.example.sharestreet.domainLayer.inteface.LocationRepository
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -22,7 +22,6 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.AndroidEntryPoint
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,7 +32,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LocationTrackingService(): Service() {
     @Inject
-    private lateinit var locationUseCase: LocationUseCase
+    lateinit var locationUseCase: LocationUseCase
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var locationCallback: LocationCallback? = null
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -105,16 +104,21 @@ class LocationTrackingService(): Service() {
         return NotificationCompat.Builder(this,CHANNEL_ID)
             .setContentTitle("Tracking location")
             .setContentText("Your location is being shared")
+            .setSmallIcon(R.drawable.ic_launcher_background)
             .setOngoing(true)
             .build()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(){
         val channel = NotificationChannel(
             CHANNEL_ID,
             "Location Tracking",
             NotificationManager.IMPORTANCE_LOW
         )
+
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(channel)
     }
     override fun onDestroy() {
         stopLocationUpdates()

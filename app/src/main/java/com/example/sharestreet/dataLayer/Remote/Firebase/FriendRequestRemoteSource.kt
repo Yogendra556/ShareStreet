@@ -73,4 +73,13 @@ class FriendRequestRemoteSource @Inject constructor(
             .update("status",type)
             .await()
     }
+
+    suspend fun getRequestById(reqId:String): FriendRequestDto?{
+        val result = db.collection("FriendRequest")
+            .document(reqId)
+            .get()
+            .await()
+
+        return result.toObject(FriendRequestDto::class.java)
+    }
 }

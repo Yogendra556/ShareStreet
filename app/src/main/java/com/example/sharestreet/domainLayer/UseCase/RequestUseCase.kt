@@ -1,10 +1,12 @@
 package com.example.sharestreet.domainLayer.UseCase
 
 import android.util.Log
+import com.example.sharestreet.dataLayer.Remote.DTO.FriendRequestDto
 import com.example.sharestreet.dataLayer.Remote.DTO.UserDto
 import com.example.sharestreet.domainLayer.inteface.AuthRepository
 import com.example.sharestreet.domainLayer.inteface.FriendRequestInterface
 import com.example.sharestreet.domainLayer.inteface.FriendsRepostoryInterface
+import com.example.sharestreet.domainLayer.inteface.LocationRepository
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
 import com.example.sharestreet.domainLayer.model.RequestWithUser
 import com.example.sharestreet.domainLayer.model.UserModel
@@ -20,6 +22,8 @@ import javax.inject.Inject
 class RequestUseCase @Inject constructor(
     private val requestRepo: FriendRequestInterface,
     private val authRepo : AuthRepository,
+    private val friendRepo : FriendsRepostoryInterface,
+    private val locationRepo: LocationRepository
 ) {
 
     suspend fun addRequest(senderId: String,receiverId: String){
@@ -90,7 +94,17 @@ class RequestUseCase @Inject constructor(
         }
             return result
     }
+    suspend fun getRequestById(requestId: String): FriendRequestDto?{
+        return requestRepo.getRequestById(requestId)
+    }
     suspend fun acceptRejectRequest(requestId:String,type:String){
+        val request = getRequestById(requestId)
+        if(request!=null && type=="Accept"){
+            val senderId = request.senderId
+            val receiverId = request.receiverId
+            friendRepo.addFriend(senderId,receiverId)
+            locationRepo.addAllowedUsers(senderId,receiverId)
+        }
         requestRepo.acceptRejectRequest(requestId,type)
     }
 }

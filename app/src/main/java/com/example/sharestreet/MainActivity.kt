@@ -1,5 +1,6 @@
 package com.example.sharestreet
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHost
@@ -27,6 +29,7 @@ import com.example.sharestreet.presentation.Friends.friendsScreen
 import com.example.sharestreet.presentation.Home.Homescreen
 import com.example.sharestreet.presentation.Location.AllowedFriendsScreen
 import com.example.sharestreet.ui.theme.ShareStreetTheme
+import com.example.sharestreet.utils.LocationTrackingService
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -69,5 +72,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        val intent = Intent(this, LocationTrackingService::class.java).apply {
+            action = LocationTrackingService.ACTION_START
+        }
+        ContextCompat.startForegroundService(this,intent)
     }
 }

@@ -4,6 +4,7 @@ import com.example.sharestreet.domainLayer.inteface.AuthRepository
 import com.example.sharestreet.domainLayer.inteface.LocationRepository
 import com.example.sharestreet.presentation.Location.LocationAccessState
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -30,12 +31,16 @@ class LocationUseCase @Inject constructor(
         return locationRepository.isUserAllowed(userID,friendId)
     }
     fun getAllowedUserList(userID: String): Flow<List<LocationAccessState>>{
-        return locationRepository.observerAllAllowedUsers(userID).map{AllowedUserMap->
-            AllowedUserMap.map{(friendId,isAllowed)->
-                val friend = authRepo.getUserById(friendId)
-                LocationAccessState(
-                     friend,isAllowed
-                )
+        return locationRepository.observerAllAllowedUsers(userID).map { AllowedUserMap ->
+            coroutineScope {
+                AllowedUserMap.map { (friendId, isAllowed) ->
+                    async {
+                        val friend = authRepo.getUserById(friendId)
+                        LocationAccessState(
+                            friend, isAllowed
+                        )
+                    }
+                }.awaitAll()
             }
         }
     }

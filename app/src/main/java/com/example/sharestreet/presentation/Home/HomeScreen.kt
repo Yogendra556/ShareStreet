@@ -165,7 +165,7 @@ fun sideDrawer(
                 NavigationDrawerItem(
                     label = {Text("Location")},
                     selected = false,
-                    onClick = {}
+                    onClick = {navController.navigate("Location")}
                 )
                 NavigationDrawerItem(
                     label = {Text("Log Out")},

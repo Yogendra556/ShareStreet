@@ -336,7 +336,7 @@ fun FriendListScreen(
         FriendCard(
             friendList[idx],
             onRemoveClick = {
-
+             if(currentUser!=null) friendViewModel.removeFriend(currentUser.uid,it)
             }
         )
       }
@@ -345,7 +345,7 @@ fun FriendListScreen(
 @Composable
 fun FriendCard(
     item: UserModel?,
-    onRemoveClick: () -> Unit
+    onRemoveClick: (String) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -401,7 +401,7 @@ fun FriendCard(
             }
 
             OutlinedButton(
-                onClick = onRemoveClick,
+                onClick = {if(item!=null)onRemoveClick(item.uid)},
                 shape = RoundedCornerShape(10.dp),
                 contentPadding = PaddingValues(
                     horizontal = 12.dp,

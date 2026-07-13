@@ -52,14 +52,14 @@ class FriendRemoteSource @Inject constructor(
             batch.set(
                 userRef,
                 mapOf(
-                    "friendsList" to FieldValue.arrayUnion(friendsId)
+                    "friendsList" to FieldValue.arrayRemove(friendsId)
                 ),
                 SetOptions.merge()
             )
             batch.set(
                 friendRef,
                 mapOf(
-                    "friendsList" to FieldValue.arrayUnion(userId)
+                    "friendsList" to FieldValue.arrayRemove(userId)
                 ),
                 SetOptions.merge()
             )

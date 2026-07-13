@@ -1,5 +1,6 @@
 package com.example.sharestreet.domainLayer.inteface
 
+import com.example.sharestreet.dataLayer.Remote.DTO.FriendRequestDto
 import com.example.sharestreet.domainLayer.model.FriendRequestModel
 import kotlinx.coroutines.flow.Flow
 
@@ -10,4 +11,6 @@ interface FriendRequestInterface {
     fun getSenderRequestById(senderId:String):Flow<List<FriendRequestModel>>
 
     suspend fun acceptRejectRequest(requestId:String,type:String)
+
+    suspend fun getRequestById(requestId: String): FriendRequestDto?
 }
