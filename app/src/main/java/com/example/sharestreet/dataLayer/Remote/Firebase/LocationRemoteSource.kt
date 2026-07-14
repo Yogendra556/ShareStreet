@@ -22,7 +22,7 @@ class LocationRemoteSource @Inject constructor(
             "lat" to lat,
             "long" to long
         )
-        ref.setValue(locationData).await()
+        ref.updateChildren(locationData).await()
     }
 
     fun observeLocation(userId: String): Flow<Pair<Double, Double>> =

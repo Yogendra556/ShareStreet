@@ -3,8 +3,11 @@ package com.example.sharestreet
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,6 +34,7 @@ import com.example.sharestreet.presentation.Location.AllowedFriendsScreen
 import com.example.sharestreet.ui.theme.ShareStreetTheme
 import com.example.sharestreet.utils.LocationTrackingService
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.contracts.contract
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -64,7 +68,6 @@ class MainActivity : ComponentActivity() {
                         composable("FriendScreen"){
                             friendsScreen()
                         }
-
                         composable("Location"){
                             AllowedFriendsScreen()
                         }
@@ -72,9 +75,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        val intent = Intent(this, LocationTrackingService::class.java).apply {
-            action = LocationTrackingService.ACTION_START
-        }
-        ContextCompat.startForegroundService(this,intent)
     }
 }
