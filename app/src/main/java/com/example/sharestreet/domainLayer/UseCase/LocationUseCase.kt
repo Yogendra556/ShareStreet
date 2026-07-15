@@ -59,7 +59,7 @@ class LocationUseCase @Inject constructor(
             it.mapNotNull {friendId->
                 val allowed = locationRepository.isUserAllowed(friendId,userID).first()
                 if(allowed){
-                    val user = authRepo.getUserById(userID)
+                    val user = authRepo.getUserById(friendId)
                     val location = locationRepository.getLocation(friendId).first()
                     FriendLocationModel(user?.displayName,location.first,location.second)
                 }

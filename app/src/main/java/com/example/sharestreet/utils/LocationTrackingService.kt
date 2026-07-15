@@ -45,6 +45,7 @@ class LocationTrackingService(): Service() {
         const val ACTION_STOP = "ACTION_STOP"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)

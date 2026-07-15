@@ -73,19 +73,26 @@ fun Homescreen(
     val searchResult by friendsRequestViewModel.searchedUsers.collectAsState()
 
     val friendsLocation by locationViewModel.friendsLocation.collectAsState()
-
+    Log.d("FriendsLocation",friendsLocation.toString())
     sideDrawer(
         searchValue = searchValue,
         onValueChange = { searchValue = it },
         searchFun = { searchFun() },
         navController = navController
     ) {
-        if (currentUser != null && searchResult != null) {
-            SearchResultList(
-                userFound = searchResult,
-                senderId = currentUser.uid
-            )
-            MapScreen(friendsLocation)
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+
+            if(friendsLocation.size!=0) {
+                MapScreen(friendsLocation)
+            }
+            if (currentUser != null && searchResult != null) {
+                SearchResultList(
+                    userFound = searchResult,
+                    senderId = currentUser.uid
+                )
+            }
         }
     }
 }
