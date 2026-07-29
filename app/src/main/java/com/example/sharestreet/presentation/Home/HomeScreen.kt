@@ -163,23 +163,35 @@ fun sideDrawer(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = false,
         drawerContent = {
             ModalDrawerSheet{
                 Spacer(modifier = Modifier.height(12.dp))
                 NavigationDrawerItem(
                     label = {Text("Friends")},
                     selected = false,
-                    onClick = {navController.navigate("FriendScreen")}
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate("FriendScreen")}
                 )
                 NavigationDrawerItem(
                     label = {Text("Location")},
                     selected = false,
-                    onClick = {navController.navigate("Location")}
+                    onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
+                        navController.navigate("Location")}
                 )
                 NavigationDrawerItem(
                     label = {Text("Log Out")},
                     selected = false,
                     onClick = {
+                        scope.launch {
+                            drawerState.close()
+                        }
                         authViewModel.signOut()
                         navController.navigate("SignIn"){
                             popUpTo(navController.graph.startDestinationId){

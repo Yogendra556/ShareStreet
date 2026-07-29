@@ -1,18 +1,24 @@
 package com.example.sharestreet.domainLayer.UseCase
 
+import android.util.Log
 import androidx.compose.runtime.collectAsState
 import com.example.sharestreet.domainLayer.inteface.AuthRepository
 import com.example.sharestreet.domainLayer.inteface.FriendsRepostoryInterface
 import com.example.sharestreet.domainLayer.inteface.LocationRepository
 import com.example.sharestreet.domainLayer.model.FriendLocationModel
 import com.example.sharestreet.presentation.Location.LocationAccessState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -55,19 +61,27 @@ class LocationUseCase @Inject constructor(
 
     fun getFriendsLocation(userID: String):Flow<List<FriendLocationModel>>{
         val friendList = friendRepo.getFriendList(userID)
-        val result = friendList.map {it->
-            it.mapNotNull {friendId->
-                val allowed = locationRepository.isUserAllowed(friendId,userID).first()
-                if(allowed){
-                    val user = authRepo.getUserById(friendId)
-                    val location = locationRepository.getLocation(friendId).first()
-                    FriendLocationModel(user?.displayName,location.first,location.second)
-                }
-                else {
-                    return@mapNotNull null
-                }
+        val result = friendList.flatMapLatest {friends->
+            Log.d("FriendsLoc",friends.toString())
+            if(friends.isEmpty()){
+                flowOf(emptyList())
             }
-        }
+            else{
+                val perFriendFlows = friends.map {friendId->
+                    combine(
+                        locationRepository.isUserAllowed(friendId, userID),
+                        locationRepository.getLocation(friendId)
+                    ) { allowed, location ->
+                        Log.d("Allowed",allowed.toString())
+                        if (!allowed) return@combine null
+                        val user = authRepo.getUserById(friendId)
+                        Log.d("FriendModel",user.toString())
+                        FriendLocationModel(user?.displayName, location.first, location.second)
+                    }
+                  }
+                combine(perFriendFlows) { results -> results.filterNotNull() }
+                }
+            }.flowOn(Dispatchers.IO)
         return result
     }
 }

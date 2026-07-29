@@ -74,10 +74,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-            val intent = Intent(this, LocationTrackingService::class.java).apply {
-                action = LocationTrackingService.ACTION_START
-            }
-            ContextCompat.startForegroundService(this,intent)
+
         }
     }
 }

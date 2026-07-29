@@ -57,7 +57,7 @@ class LocationRemoteSource @Inject constructor(
 
     fun isUserAllowed(userId: String,friendId: String):Flow<Boolean> {
         return callbackFlow {
-            val ref = rtdb.getReference("Location/${userId}/AllowedUse/${friendId}")
+            val ref = rtdb.getReference("Location/${userId}/AllowedUsers/${friendId}")
             val listener = object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val result = snapshot.getValue(Boolean::class.java)?:false
