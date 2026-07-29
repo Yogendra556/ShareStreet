@@ -1,29 +1,39 @@
-##ShareStreet - 
-Live location sharing app A real time location sharing app build with Kotlin,Compose,Firebase and MapLibre. 
+# 📍 ShareStreet - Live Location Sharing App
 
+A real-time location sharing Android application built with **Kotlin**, **Jetpack Compose**, **Firebase**, and **MapLibre**. The app allows users to securely share their live location with friends while maintaining full control over who can access it.
 
-#Feature:
-Real time location sharing Live Location updates Friend request system(send,accept and reject) Control who can access your location Authentication and synchronization through firebase 
+## ✨ Features
 
+* 📍 Real-time location sharing
+* 🔄 Live location updates
+* 👥 Friend request system (send, accept, and reject requests)
+* 🔒 Control who can access your live location
+* 🔐 User authentication with Firebase Authentication
+* ☁️ Real-time data synchronization using Firebase
 
-#TechStack:
-Kotlin 
-Jetpack
-Compose 
-Hilt 
-FirebaseAuth 
-FirebaseFirestore
-FirebaseRTDB 
-MapLibre SDK 
-FusedLocationProviderClient 
+## 🛠️ Tech Stack
 
+* Kotlin
+* Jetpack Compose
+* Hilt
+* Firebase Authentication
+* Firebase Firestore
+* Firebase Realtime Database
+* MapLibre SDK
+* FusedLocationProviderClient
 
-#MVVM Architecture
-This project is build on MVVM architecture. 
-Remote Layer 
-      | 
-Repository Layer 
-      |
-Domain Layer
-      |
+## 🏗️ MVVM Architecture
+
+This project follows the **MVVM (Model–View–ViewModel)** architecture.
+
+```text
 Presentation Layer
+        │
+   ViewModel
+        │
+   Domain Layer
+        │
+ Repository Layer
+        │
+   Remote Layer
+```
