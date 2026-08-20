@@ -8,6 +8,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,6 +66,7 @@ import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
 import org.maplibre.geojson.FeatureCollection
 import org.maplibre.geojson.Point
+import java.lang.Exception
 import kotlin.collections.get
 
 @Composable
@@ -249,29 +251,44 @@ fun MAP(
 
     LaunchedEffect(Unit) {
         mapView.getMapAsync { map->
-            map.setStyle("https://demotiles.maplibre.org/style.json"){loadedStyle->
+            map.setStyle("https://tiles.openfreemap.org/styles/bright"){loadedStyle->
                 val iconBitmap = generateMarkerBitmap()
                 loadedStyle.addImage(ICON_ID,iconBitmap)
-                loadedStyle.addSource(GeoJsonSource(SOURCE_ID))
-                loadedStyle.addLayer(
-                    SymbolLayer(LAYER_ID,SOURCE_ID).withProperties(
-                        PropertyFactory.iconImage(ICON_ID),
-                        PropertyFactory.iconAllowOverlap(true),
-                        PropertyFactory.iconSize(1.0f),
 
-                        PropertyFactory.textField(Expression.get("name")),
-                        PropertyFactory.textSize(14f),
-                        PropertyFactory.textColor(Color.BLACK),
-                        PropertyFactory.textHaloColor(Color.WHITE),
-                        PropertyFactory.textHaloWidth(1.5f),
-                        PropertyFactory.textOffset(arrayOf(0f, 1.5f)),   // push text below the icon
-                        PropertyFactory.textAnchor(Property.TEXT_ANCHOR_TOP),
-                        PropertyFactory.textAllowOverlap(true),
-                        PropertyFactory.textIgnorePlacement(true)
+                loadedStyle.addSource(GeoJsonSource(SOURCE_ID))
+                try {
+                    loadedStyle.addLayerAbove(
+                        SymbolLayer(LAYER_ID, SOURCE_ID).withProperties(
+                            PropertyFactory.iconImage(ICON_ID),
+                            PropertyFactory.iconAllowOverlap(true),
+                            PropertyFactory.iconSize(1.0f),
+                            PropertyFactory.iconOptional(true),
+                            PropertyFactory.textField(
+                                Expression.format(
+                                    Expression.formatEntry(Expression.get("name"))
+                                )
+                            ),
+                            PropertyFactory.textSize(14f),
+                            PropertyFactory.textColor("#000000"),
+                            PropertyFactory.textHaloColor("#FFFFFF"),
+                            PropertyFactory.textHaloWidth(1.5f),
+                            PropertyFactory.textOffset(arrayOf(0f, 1.5f)),
+                            PropertyFactory.textAnchor(Property.TEXT_ANCHOR_TOP),
+                            PropertyFactory.textAllowOverlap(true),
+                            PropertyFactory.textIgnorePlacement(true),
+                            PropertyFactory.textOptional(true),
+                            PropertyFactory.textFont(arrayOf("Noto Sans Regular"))
+                            ),
+                        loadedStyle.layers.last().id
                     )
-                )
-                style = loadedStyle
+                    style = loadedStyle
+                    Log.d("STYLE", "layer added ok")
+                }
+                catch (e: Exception){
+                    Log.d("MAPEX","{$e}")
+                }
             }
+
         }
     }
     LaunchedEffect(friendsLocation,style) {
@@ -282,9 +299,11 @@ fun MAP(
                 addStringProperty("name",it.friend)
             }
         }
+        Log.d("FEATURES",features.toString())
         currentStyle.getSourceAs<GeoJsonSource>(SOURCE_ID)
             ?.setGeoJson(FeatureCollection.fromFeatures(features))
     }
+
 }
 fun generateMarkerBitmap(colorHex: String = "#FF5722"): Bitmap {
     val size = 60
